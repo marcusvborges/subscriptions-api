@@ -1,7 +1,7 @@
 import { BaseEntity } from "src/modules/database/entities/base.entity";
 import { Column, Entity, OneToMany } from "typeorm";
 import { Role } from "../enum/role.enum";
-import { Subscription } from "src/subscription/entities/subscription.entity";
+import { Subscription } from "src/modules/subscription/entities/subscription.entity";
 
 @Entity('users')
 export class User extends BaseEntity {

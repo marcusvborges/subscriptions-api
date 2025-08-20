@@ -1,5 +1,5 @@
 import { BaseEntity } from "src/modules/database/entities/base.entity";
-import { Subscription } from "src/subscription/entities/subscription.entity";
+import { Subscription } from "src/modules/subscription/entities/subscription.entity";
 import { Column, Entity, OneToMany } from "typeorm";
 
 @Entity('plans')
