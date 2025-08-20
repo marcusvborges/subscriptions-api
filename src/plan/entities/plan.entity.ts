@@ -1,6 +1,8 @@
 import { BaseEntity } from "src/modules/database/entities/base.entity";
-import { Column } from "typeorm";
+import { Subscription } from "src/subscription/entities/subscription.entity";
+import { Column, Entity, OneToMany } from "typeorm";
 
+@Entity('plans')
 export class Plan extends BaseEntity {
   @Column()
   name: string;
@@ -8,4 +10,6 @@ export class Plan extends BaseEntity {
   @Column('decimal', { precision: 10, scale: 2 })
   price: number;
   
+  @OneToMany(() => Subscription, (sub) => sub.plan)
+  subscriptions: Subscription[];
 }
