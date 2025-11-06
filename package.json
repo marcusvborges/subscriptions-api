@@ -18,10 +18,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration:generate": "pnpm run typeorm -- migration:generate src/modules/db/migrations/migration -d src/modules/db/datasource.ts",
-    "migration:run": "pnpm run typeorm -- migration:run -d src/modules/db/datasource.ts",
-    "migration:revert": "pnpm run typeorm -- migration:revert -d src/modules/db/datasource.ts",
-    "migration:prod": "npx typeorm-ts-node-commonjs migration:run -d ./dist/modules/db/datasource.js"
+    "typeorm": "node -r ts-node/register -r tsconfig-paths/register -r dotenv/config ./node_modules/typeorm/cli.js",
+    "migration:generate": "pnpm run migration:run && pnpm run typeorm migration:generate src/modules/database/migrations/migration -d ./src/modules/database/datasource.ts",
+    "migration:create": "pnpm run typeorm migration:create src/modules/database/migrations/migration",
+    "migration:run": "pnpm run typeorm migration:run -d ./src/modules/database/datasource.ts",
+    "migration:revert": "pnpm run typeorm migration:revert -d ./src/modules/database/datasource.ts",
+    "migration:prod": "npx typeorm-ts-node-commonjs migration:run -d ./dist/modules/database/datasource.js"
   },
   "dependencies": {
     "@keyv/redis": "^5.1.0",
@@ -37,6 +39,7 @@
     "bcrypt": "^6.0.0",
     "class-validator": "^0.14.2",
     "config": "^4.1.1",
+    "dotenv": "^17.2.3",
     "ioredis": "^5.7.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
@@ -44,7 +47,6 @@
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.25",
     "zod": "^4.0.17"
   },
   "devDependencies": {
@@ -72,6 +74,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "typeorm": "^0.3.25",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
   },

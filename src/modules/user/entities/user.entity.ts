@@ -2,6 +2,8 @@ import { BaseEntity } from "src/modules/database/entities/base.entity";
 import { Column, Entity, OneToMany } from "typeorm";
 import { Role } from "../enum/role.enum";
 import { Subscription } from "src/modules/subscription/entities/subscription.entity";
+import { RefreshToken } from "src/modules/auth/entities/refresh-token.entity";
+import { Auth } from "src/modules/auth/entities/auth.entity";
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -23,4 +25,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Subscription, (sub) => sub.user)
   subscriptions: Subscription[];
+
+  @OneToMany(() => Auth, (auth) => auth.user)
+  auths: Auth[];
+
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  refreshTokens: RefreshToken[];
 }
