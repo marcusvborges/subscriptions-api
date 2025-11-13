@@ -1,4 +1,3 @@
-// auth.module.ts
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -9,8 +8,13 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { UserModule } from '../user/user.module';
 import { HashService } from '../hash/hash.service'; 
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { RefreshToken } from './entities/refresh-token.entity';
 @Module({
   imports: [
+    TypeOrmModule.forFeature([
+      RefreshToken,
+    ]),
     ConfigModule,
     PassportModule,
     JwtModule.registerAsync({

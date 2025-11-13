@@ -5,6 +5,7 @@ import {
   Body, 
   Res,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -12,6 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { CurrentUser } from './decorators/current-user.decorator';
 import type { JwtPayload } from './interfaces/jwt-payload.interface';
 import type { Response, Request } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -76,6 +78,7 @@ export class AuthController {
     return { message: 'Token refreshed' };
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('logout')
   async logout(
     @CurrentUser() user: JwtPayload,

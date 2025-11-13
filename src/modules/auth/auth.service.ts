@@ -5,7 +5,6 @@ import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { HashService } from '../hash/hash.service';
 import { RegisterDto } from './dto/register.dto';
-import { email } from 'zod';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { Repository } from 'typeorm';
@@ -72,10 +71,12 @@ export class AuthService {
   }
 
 	async logout(userId: string) {
-		this.refreshTokenRepository.update(
-			{ user: { id: userId }, revoked: false },
-			{ revoked: true }
-		);
+		await this.refreshTokenRepository.createQueryBuilder()
+      .update()
+      .set({ revoked: true })
+      .where('userId = :userId', { userId })
+      .andWhere('revoked = :revoked', { revoked: false })
+      .execute();
 
 		return { message: 'User logged out of all devices' }
 	}

@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HashService } from '../hash/hash.service';
+import type { IHashService } from '../hash/interfaces/hash.interface';
 import { ResponseUserDto } from './dto/response-user.dto';
 
 @Injectable()
@@ -12,8 +12,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @Inject('HasService')
-    private readonly hasService: HashService,
+    @Inject('HashService')
+    private readonly hasService: IHashService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
@@ -61,7 +61,9 @@ export class UserService {
     return this.userRepository
       .createQueryBuilder('user')
       .addSelect('user.password')
-      .where('user.email = :email', { email: email.trim().toLowerCase() })
+      .where('user.email = :email', {
+        email: email.trim().toLowerCase()
+      })
       .getOne();
   }
 }

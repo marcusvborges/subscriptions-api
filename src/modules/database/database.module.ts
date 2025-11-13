@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypedConfigService } from '../config/typed-config.service';
+import { ConfigModule } from '@nestjs/config';
+import { TypedConfigModule } from '../config/typed-config.module';
 
 @Module({
   imports: [
+    TypedConfigModule,
     TypeOrmModule.forRootAsync({
+      imports: [TypedConfigModule],
       useFactory: (config: TypedConfigService) => ({
         type: 'postgres',
         host: config.get('DB_HOST'),
