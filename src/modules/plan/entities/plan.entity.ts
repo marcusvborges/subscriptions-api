@@ -9,6 +9,9 @@ export class Plan extends BaseEntity {
 
   @Column('decimal', { precision: 10, scale: 2 })
   price: number;
+
+  @Column({ default: true })
+  active: boolean;
   
   @OneToMany(() => Subscription, (sub) => sub.plan)
   subscriptions: Subscription[];

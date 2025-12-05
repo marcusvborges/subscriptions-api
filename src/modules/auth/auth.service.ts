@@ -57,16 +57,8 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    const standardizedEmail = registerDto.email.trim().toLowerCase();
-
-    const existingUser = await this.userService.findByEmail(standardizedEmail)
-    if (existingUser){
-      throw new UnauthorizedException('Email already registered.')
-    }
-
     return await this.userService.create({
       ...registerDto,
-      email: standardizedEmail,
     })
   }
 
