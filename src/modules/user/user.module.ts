@@ -10,12 +10,7 @@ import { Auth } from '../auth/entities/auth.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      User,
-      Auth,
-      Subscription,
-      Plan,
-    ]),
+    TypeOrmModule.forFeature([User, Auth]),
     HashModule,
   ],
   controllers: [UserController],
