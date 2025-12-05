@@ -1,33 +1,26 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Subscription } from './entities/subscription.entity';
 import { Repository } from 'typeorm';
-import { User } from '../user/entities/user.entity';
-import { Plan } from '../plan/entities/plan.entity';
+import { PlanService } from '../plan/plan.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class SubscriptionService {
   constructor(
     @InjectRepository(Subscription)
-    private subscriptionRepository: Repository<Subscription>,
-
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-
-    @InjectRepository(Plan)
-    private planRepository: Repository<Plan>,
+    private readonly subscriptionRepository: Repository<Subscription>,
+    private readonly userService: UserService,
+    @Inject(forwardRef(() => PlanService))
+    private readonly planService: PlanService,
   ) {}
 
   async create(dto: CreateSubscriptionDto): Promise<Subscription> {
-    const user = await this.userRepository.findOne({
-      where: { id: dto.userId },
-    });
+    const user = await this.userService.findOne(dto.userId);
     if (!user) throw new NotFoundException('User not found');
 
-    const plan = await this.planRepository.findOne({
-      where: { id: dto.planId, active: true },
-    });
+    const plan = await this.planService.findOne(dto.planId);
     if (!plan) throw new NotFoundException('Plan not found or inactive');
 
     const activeSubscription = await this.subscriptionRepository.findOne({

@@ -15,8 +15,8 @@ import { SubscriptionService } from '../subscription/subscription.service';
 export class PlanService {
   constructor(
     @InjectRepository(Plan)
-    private planRepository: Repository<Plan>,
-    private subscriptionService: SubscriptionService,
+    private readonly planRepository: Repository<Plan>,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   async create(createPlanDto: CreatePlanDto): Promise<Plan> {
@@ -36,8 +36,8 @@ export class PlanService {
   }
 
   async findOne(id: string): Promise<Plan> {
-    const plan = await this.planRepository.findOne({ where: { id } });
-    if (!plan) throw new NotFoundException('Plan not found');
+    const plan = await this.planRepository.findOne({ where: { id, active: true } });
+    if (!plan) throw new NotFoundException('Plan not found or inactive');
     return plan;
   }
 
