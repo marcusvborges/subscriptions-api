@@ -1,98 +1,222 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Subscription Management API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A secure and extensible backend API for managing users, plans, and subscriptions — built with NestJS, TypeScript, and PostgreSQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Table of Contents
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [Subscription Management API](#subscription-management-api)
+  - [Table of Contents](#table-of-contents)
+  - [About the Project](#about-the-project)
+  - [Features](#features)
+    - [Authentication \& Security](#authentication--security)
+    - [User Module](#user-module)
+    - [Plan Module](#plan-module)
+    - [Subscription Module](#subscription-module)
+    - [Additional Features](#additional-features)
+  - [Tech Stack](#tech-stack)
+  - [Architecture Overview](#architecture-overview)
+  - [Prerequisites](#prerequisites)
+  - [Quick start](#quick-start)
+  - [Environment Variables](#environment-variables)
+  - [Available Scripts](#available-scripts)
+  - [Folder Structure](#folder-structure)
+  - [Roadmap](#roadmap)
+    - [Completed](#completed)
+    - [Next Steps](#next-steps)
+  - [License](#license)
 
-## Project setup
+---
 
+## About the Project
+
+This project is a **Subscription Management API** designed as a generic backend foundation
+for systems that require user authentication, authorization and subscription-based access control.
+
+It focuses on modeling a flexible subscription domain while applying modern backend engineering practices such as:
+
+- Modular architecture
+- Layered design (Controller → Service → Repository)
+- DTO validation
+- JWT authentication
+- Role-based Access Control (RBAC)
+
+The project is intentionally generic and not tied to any specific business or billing provider, and is designed to be consumed by other services through a well-defined API.
+
+---
+
+## Features
+
+### Authentication & Security
+- Login & registration with hashed passwords
+- JWT authentication (access & refresh tokens)
+- Refresh token rotation
+- Route protection using Passport guards
+- Role-based Access Control (USER, ADMIN, SUPERADMIN)
+- Cookie-based authentication support
+- Secure logout with refresh token invalidation
+
+### User Module
+- User CRUD operations with soft delete
+- Role management
+- One-to-many relationship between users and subscriptions
+
+### Plan Module
+- CRUD operations for subscription plans
+- Support for multiple pricing configurations
+- Flexible attributes using JSON-based fields
+- DTO-based validation
+
+### Subscription Module
+- Subscription creation and cancellation
+- Prevention of duplicate active subscriptions per plan
+- Subscription lifecycle derived from temporal fields
+- Historical data preservation
+
+### Additional Features
+- Centralized exception handling
+- Global validation pipes
+- OpenAPI (Swagger) documentation for API exploration and integration
+- Consistent and maintainable project structure
+
+---
+
+## Tech Stack
+| Technology | Purpose |
+|-----------|----------|
+| **NestJS (Node.js)** | Backend framework |
+| **TypeScript** | Type-safe development |
+| **PostgreSQL** | Database |
+| **TypeORM** | ORM & migrations |
+| **Passport + JWT** | Authentication |
+| **Jest** | Unit testing |
+| **Docker** | Containerization |
+
+---
+
+## Architecture Overview
+
+Layered architecture:
+
+Controller → Service → Repository → Database
+
+
+Each domain (Users, Plans, Subscriptions) has its own module with clean separation of concerns.
+
+## Prerequisites
+
+- Node.js v20.19.2+
+- pnpm
+- PostgreSQL
+- Redis
+
+## Quick start
+
+1. **Clone and install the dependencies**
 ```bash
-$ pnpm install
+git clone https://github.com/marcusvborges/subscriptions-api.git
+cd subscriptions-api
+pnpm install
 ```
 
-## Compile and run the project
-
+2. **Define the environment variables**
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+cp .env.example .env
 ```
 
-## Run tests
-
+3. **Initialize the dependencies with Docker**
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+docker-compose up -d
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+4. **Execute the database migrations**
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+pnpm run migration:run
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+5. **Start the development server**
+```bash
+pnpm run start:dev
+```
 
-## Resources
+## Environment Variables
 
-Check out a few resources that may come in handy when working with NestJS:
+Running `cp .env.example .env` will create a `.env` file in the project root:
+```env
+PORT=3000
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASS=postgres
+DB_NAME=subscription_db
 
-## Support
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRATION=3600
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+REDIS_URL=redis://localhost:6379
+```
 
-## Stay in touch
+Configure your environment variables as needed.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Available Scripts
+
+```bash
+
+# Development
+pnpm run start:dev	   # Run in watch mode
+pnpm run start:debug   # Run in debug mode
+
+# Production
+pnpm run build	       # Build project
+pnpm run start:prod    # Start production server
+
+# Database & Migrations
+pnpm run migration:generate  # Generates new migration
+pnpm run migration:run       # Executes pending migrations
+pnpm run migration:revert    # Revert last migration
+
+# Tests
+pnpm run test   # Run tests
+```
+
+## Folder Structure
+
+```
+src/
+├── common/
+├── modules/
+│   ├── auth/
+│   ├── cache/
+│   ├── config/
+│   ├── database/
+│   ├── hash/
+│   ├── plan/
+│   ├── subscription/
+│   ├── user/
+└── main.ts
+```
+
+## Roadmap
+
+### Completed
+- Project setup
+- Database configuration
+- User, Plan, Subscription modules
+- JWT authentication
+- RBAC
+- BaseEntity inheritance
+- Subscription business logic
+
+
+### Next Steps
+- Cron jobs for automatic expiration
+- Webhook integration example (out of core scope)
+- Unit tests (basic)
+- Admin panel (Next.js)
+- Full E2E tests
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License.
