@@ -6,6 +6,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { HashModule } from './modules/hash/hash.module';
 import { DatabaseModule } from './modules/database/database.module';
 import { TypedConfigModule } from './modules/config/typed-config.module';
+import { SeedModule } from './modules/database/seeders/seed.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { TypedConfigModule } from './modules/config/typed-config.module';
     PlansModule, 
     SubscriptionModule, 
     AuthModule, 
-    HashModule
+    HashModule,
+    SeedModule,
   ],
 })
 export class AppModule {}
