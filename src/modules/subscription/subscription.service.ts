@@ -5,6 +5,7 @@ import { Subscription } from './entities/subscription.entity';
 import { Repository } from 'typeorm';
 import { PlanService } from '../plan/plan.service';
 import { UserService } from '../user/user.service';
+import { PlanPrice } from '../plan/entities/plan-price.entity';
 
 @Injectable()
 export class SubscriptionService {
@@ -16,15 +17,24 @@ export class SubscriptionService {
     private readonly planService: PlanService,
   ) {}
 
-  async create(dto: CreateSubscriptionDto): Promise<Subscription> {
-    const user = await this.userService.findOne(dto.userId);
+  async create(createSubscriptionDto: CreateSubscriptionDto): Promise<Subscription> {
+    const user = await this.userService.findOne(createSubscriptionDto.userId);
     if (!user) throw new NotFoundException('User not found');
 
-    const plan = await this.planService.findOne(dto.planId);
+    const plan = await this.planService.findOne(createSubscriptionDto.planId);
     if (!plan) throw new NotFoundException('Plan not found or inactive');
 
+    let planPrice: PlanPrice | undefined;
+    if (createSubscriptionDto.planPriceId) {
+      planPrice = await this.planService.findPriceById(createSubscriptionDto.planPriceId);
+      if (!planPrice) throw new NotFoundException('Plan price not found');
+      if (planPrice.plan.id !== plan.id) {
+        throw new BadRequestException('Plan price does not belong to the selected plan');
+      }
+    }
+
     const activeSubscription = await this.subscriptionRepository.findOne({
-      where: { user: { id: dto.userId }, active: true },
+      where: { user: { id: createSubscriptionDto.userId }, active: true },
     });
     if (activeSubscription) {
       throw new BadRequestException('User already has an active subscription');
@@ -37,9 +47,10 @@ export class SubscriptionService {
     const subscription = this.subscriptionRepository.create({
       user,
       plan,
+      price: planPrice,
+      active: true,
       startDate,
       expiresAt,
-      active: true,
     });
 
     return await this.subscriptionRepository.save(subscription);

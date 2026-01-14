@@ -1,15 +1,27 @@
-import {
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class CreatePlanDto {
+  @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   name: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  price: number;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiProperty({ default: true })
+  @IsOptional()
+  @IsBoolean()
+  active?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @ApiProperty({ required: false, type: Object })
+  @IsOptional()
+  features?: Record<string, any>;
 }
