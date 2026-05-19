@@ -11,10 +11,18 @@ import { TypedConfigService } from './typed-config.service';
       cache: true,
       validate: (env) => {
         const result = envSchema.safeParse(env);
+
         if (!result.success) {
-          new Logger(TypedConfigModule.name);
-          process.exit(1);
+          const logger = new Logger(TypedConfigModule.name);
+
+          logger.error(
+            'Invalid environment variables',
+            JSON.stringify(result.error.format(), null, 2),
+          );
+
+          throw new Error('Invalid environment variables');
         }
+
         return result.data;
       },
     }),

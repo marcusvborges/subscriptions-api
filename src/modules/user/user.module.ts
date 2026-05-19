@@ -7,10 +7,7 @@ import { HashModule } from '../hash/hash.module';
 import { Auth } from '../auth/entities/auth.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User, Auth]),
-    HashModule,
-  ],
+  imports: [TypeOrmModule.forFeature([User, Auth]), HashModule],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],

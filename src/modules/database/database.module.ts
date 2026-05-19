@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypedConfigService } from '../config/typed-config.service';
-import { ConfigModule } from '@nestjs/config';
 import { TypedConfigModule } from '../config/typed-config.module';
 
 @Module({

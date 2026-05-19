@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { Repository } from 'typeorm';
 import { ResponseUserDto } from '../user/dto/response-user.dto';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
     private readonly refreshTokenRepository: Repository<RefreshToken>,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
-    private readonly hashService: HashService
+    private readonly hashService: HashService,
   ) {}
 
   async login(loginDto: LoginDto) {
@@ -25,14 +26,11 @@ export class AuthService {
 
     const user = await this.validateUserCredentials(
       standardizedEmail,
-      loginDto.password
+      loginDto.password,
     );
 
-    const {
-      accessToken,
-      refreshToken,
-      refreshExpires,
-    } = await this.generatetokens(user);
+    const { accessToken, refreshToken, refreshExpires } =
+      this.generateTokens(user);
 
     const hashRefresh = await this.hashService.hash(refreshToken);
 
@@ -59,19 +57,20 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     return await this.userService.create({
       ...registerDto,
-    })
+    });
   }
 
-	async logout(userId: string) {
-		await this.refreshTokenRepository.createQueryBuilder()
+  async logout(userId: string) {
+    await this.refreshTokenRepository
+      .createQueryBuilder()
       .update()
       .set({ revoked: true })
       .where('userId = :userId', { userId })
       .andWhere('revoked = :revoked', { revoked: false })
       .execute();
 
-		return { message: 'User logged out of all devices' }
-	}
+    return { message: 'User logged out of all devices' };
+  }
 
   private async validateUserCredentials(
     email: string,
@@ -85,74 +84,73 @@ export class AuthService {
   }
 
   async refreshToken(token: string) {
-    if (!token) throw new UnauthorizedException(
-			'No refresh token provided'
-		);
-    try{
-      const payload = this.jwtService.verify(token);
+    if (!token) throw new UnauthorizedException('No refresh token provided');
+    try {
+      const payload = this.jwtService.verify<JwtPayload>(token);
       const user = await this.userService.findOne(payload.sub);
 
-      if (!user) throw new UnauthorizedException(
-				'Invalid refresh token'
-			);
+      if (!user) throw new UnauthorizedException('Invalid refresh token');
 
       const refreshEntity = await this.refreshTokenRepository.find({
-        where: { user: {  id: user.id  }, revoked: false },
+        where: { user: { id: user.id }, revoked: false },
       });
 
-      const validToken = await this.findValidToken(
-				token,
-				refreshEntity
-			);
+      const validToken = await this.findValidToken(token, refreshEntity);
 
-			if (!validToken) throw new UnauthorizedException('Invalid token');
-			
-			validToken.revoked = true;
-			await this.refreshTokenRepository.save(validToken);
+      if (!validToken) throw new UnauthorizedException('Invalid token');
 
-			const { accessToken, refreshToken: newToken, refreshExpires } = 
-				await this.generatetokens(user);
+      validToken.revoked = true;
+      await this.refreshTokenRepository.save(validToken);
 
-			const hasToken = await this.hashService.hash(newToken);
-			
-			await this.refreshTokenRepository.save(
-				this.refreshTokenRepository.create({
-					token: hasToken,
-					expiresAt: refreshExpires,
-					revoked: false,
-					user,
-				}),
-			);
+      const {
+        accessToken,
+        refreshToken: newToken,
+        refreshExpires,
+      } = this.generateTokens(user);
 
-			return {
-				accessToken,
-				refreshToken: newToken,
-				refreshExpires,
-			};
+      const hasToken = await this.hashService.hash(newToken);
+
+      await this.refreshTokenRepository.save(
+        this.refreshTokenRepository.create({
+          token: hasToken,
+          expiresAt: refreshExpires,
+          revoked: false,
+          user,
+        }),
+      );
+
+      return {
+        accessToken,
+        refreshToken: newToken,
+        refreshExpires,
+      };
     } catch {
-      throw new UnauthorizedException('Invalid refresh token')
+      throw new UnauthorizedException('Invalid refresh token');
     }
   }
 
   private async findValidToken(
     recivedToken: string,
-    storedToken: RefreshToken[]
-	): Promise<RefreshToken | null> {
-	  for (const stored of storedToken) {
-			const isMatch = await this.hashService.compare(recivedToken, stored.token);
-			if (isMatch && stored.expiresAt > new Date()) {
-				return stored;
-			}
-		}
-		return null;
+    storedToken: RefreshToken[],
+  ): Promise<RefreshToken | null> {
+    for (const stored of storedToken) {
+      const isMatch = await this.hashService.compare(
+        recivedToken,
+        stored.token,
+      );
+      if (isMatch && stored.expiresAt > new Date()) {
+        return stored;
+      }
+    }
+    return null;
   }
 
-  private async generatetokens(user: ResponseUserDto) {
+  private generateTokens(user: ResponseUserDto) {
     const payload = {
       sub: user.id,
       email: user.email,
       role: user.role,
-    }
+    };
 
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: '15m',
@@ -163,7 +161,7 @@ export class AuthService {
 
     const refreshToken = this.jwtService.sign(
       { sub: user.id },
-      { expiresIn: '7d' }
+      { expiresIn: '7d' },
     );
 
     return { accessToken, refreshToken, refreshExpires };

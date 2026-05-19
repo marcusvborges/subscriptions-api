@@ -62,10 +62,7 @@ export class PlansController {
   }
 
   @Patch('prices/:id')
-  updatePrice(
-    @Param('id') id: string,
-    @Body() updatePriceDto: UpdatePriceDto,
-  ) {
+  updatePrice(@Param('id') id: string, @Body() updatePriceDto: UpdatePriceDto) {
     return this.plansService.updatePrice(id, updatePriceDto);
   }
 

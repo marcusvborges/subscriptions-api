@@ -4,13 +4,15 @@ import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 export class CreateSubscriptionDto {
   @IsUUID()
   @IsNotEmpty()
-  userId: string;
+  userId!: string;
 
   @IsUUID()
   @IsNotEmpty()
-  planId: string;
+  planId!: string;
 
-  @ApiPropertyOptional({ description: 'Optional: use a specific plan price (price id) to charge' })
+  @ApiPropertyOptional({
+    description: 'Optional: use a specific plan price (price id) to charge',
+  })
   @IsOptional()
   @IsUUID()
   planPriceId?: string;

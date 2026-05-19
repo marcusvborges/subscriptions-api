@@ -24,12 +24,12 @@ export class UserService {
   async create(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
     const standardizedEmail = createUserDto.email.trim().toLowerCase();
 
-    const existingUser = await this.findByEmail(standardizedEmail)
+    const existingUser = await this.findByEmail(standardizedEmail);
     if (existingUser) {
-      throw new ConflictException('Email already registered.')
+      throw new ConflictException('Email already registered.');
     }
 
-    const hashPassword = await this.hasService.hash(createUserDto.password)
+    const hashPassword = await this.hasService.hash(createUserDto.password);
 
     const user = this.userRepository.create({
       ...createUserDto,
@@ -48,20 +48,23 @@ export class UserService {
 
   async findOne(id: string): Promise<ResponseUserDto> {
     const user = await this.userRepository.findOne({
-      where: { id }
+      where: { id },
     });
 
-    if(!user) throw new NotFoundException('User not found')
+    if (!user) throw new NotFoundException('User not found');
 
-    const { password, ...result } = user;
-    
-    return result;
+    return {
+      id: user.id,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+    } satisfies ResponseUserDto;
   }
 
   async findByEmail(email: string) {
     return await this.userRepository.findOne({
       where: { email: email.trim().toLowerCase() },
-    })
+    });
   }
 
   async findByEmailWithPassword(email: string): Promise<User | null> {
@@ -69,7 +72,7 @@ export class UserService {
       .createQueryBuilder('user')
       .addSelect('user.password')
       .where('user.email = :email', {
-        email: email.trim().toLowerCase()
+        email: email.trim().toLowerCase(),
       })
       .getOne();
   }
@@ -80,9 +83,9 @@ export class UserService {
     if (updateUserDto.email && user.email !== updateUserDto.email) {
       const standardizedEmail = updateUserDto.email.trim().toLowerCase();
 
-      const existingUser = await this.findByEmail(standardizedEmail)
+      const existingUser = await this.findByEmail(standardizedEmail);
       if (existingUser) {
-        throw new ConflictException('Email already registered.')
+        throw new ConflictException('Email already registered.');
       }
 
       user.email = standardizedEmail;
@@ -94,8 +97,12 @@ export class UserService {
 
     const savedUser = await this.userRepository.save(user);
 
-    const { password, ...result } = savedUser;
-    return result;
+    return {
+      id: savedUser.id,
+      fullName: savedUser.fullName,
+      email: savedUser.email,
+      role: savedUser.role,
+    } satisfies ResponseUserDto;
   }
 
   async remove(id: string) {

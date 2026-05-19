@@ -1,34 +1,34 @@
-import { BaseEntity } from "src/modules/database/entities/base.entity";
-import { Column, Entity, OneToMany } from "typeorm";
-import { Role } from "../enum/role.enum";
-import { Subscription } from "src/modules/subscription/entities/subscription.entity";
-import { RefreshToken } from "src/modules/auth/entities/refresh-token.entity";
-import { Auth } from "src/modules/auth/entities/auth.entity";
+import { BaseEntity } from '../../database/entities/base.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { Role } from '../enum/role.enum';
+import { Subscription } from '../../subscription/entities/subscription.entity';
+import { RefreshToken } from '../../auth/entities/refresh-token.entity';
+import { Auth } from '../../auth/entities/auth.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
   @Column()
-  fullName: string;
+  fullName!: string;
 
-  @Column({unique: true})
-  email: string;
-  
+  @Column({ unique: true })
+  email!: string;
+
   @Column()
-  password: string;
+  password!: string;
 
   @Column({
-    type:'enum',
+    type: 'enum',
     enum: Role,
-    default: Role.USER
+    default: Role.USER,
   })
-  role: Role;
+  role!: Role;
 
   @OneToMany(() => Subscription, (sub) => sub.user)
-  subscriptions: Subscription[];
+  subscriptions!: Subscription[];
 
   @OneToMany(() => Auth, (auth) => auth.user)
-  auths: Auth[];
+  auths!: Auth[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
-  refreshTokens: RefreshToken[];
+  refreshTokens!: RefreshToken[];
 }

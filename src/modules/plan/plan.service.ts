@@ -39,21 +39,21 @@ export class PlanService {
     const qb = this.planRepository
       .createQueryBuilder('plan')
       .leftJoinAndSelect('plan.prices', 'price');
-    
+
     if (activeOnly) qb.where('plan.active = :active', { active: true });
     return await qb.getMany();
   }
 
   async findOne(id: string): Promise<Plan> {
-    const plan = await this.planRepository.findOne({ where: { id }, relations: ['prices'] });
+    const plan = await this.planRepository.findOne({
+      where: { id },
+      relations: ['prices'],
+    });
     if (!plan) throw new NotFoundException('Plan not found');
     return plan;
   }
 
-  async update(
-    id: string,
-    updatePlanDto: UpdatePlanDto,
-  ): Promise<Plan> {
+  async update(id: string, updatePlanDto: UpdatePlanDto): Promise<Plan> {
     const plan = await this.findOne(id);
     Object.assign(plan, updatePlanDto);
     return this.planRepository.save(plan);
@@ -61,7 +61,8 @@ export class PlanService {
 
   async remove(id: string) {
     const plan = await this.findOne(id);
-    const activeSubs = await this.subscriptionService.countActiveSubscriptionsByPlan(id);
+    const activeSubs =
+      await this.subscriptionService.countActiveSubscriptionsByPlan(id);
 
     if (activeSubs > 0) {
       throw new BadRequestException(
@@ -97,7 +98,8 @@ export class PlanService {
 
   async findPriceById(priceId: string): Promise<PlanPrice> {
     const price = await this.planPriceRepository.findOne({
-      where: { id: priceId }, relations: ['plan'],
+      where: { id: priceId },
+      relations: ['plan'],
     });
     if (!price) throw new NotFoundException('Plan price not found');
     return price;
@@ -116,7 +118,6 @@ export class PlanService {
     Object.assign(price, updatePriceDto);
     return this.planPriceRepository.save(price);
   }
-
 
   async removePrice(priceId: string) {
     const price = await this.planPriceRepository.findOne({

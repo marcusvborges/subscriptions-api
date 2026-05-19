@@ -1,4 +1,10 @@
-import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Subscription } from './entities/subscription.entity';
@@ -17,7 +23,9 @@ export class SubscriptionService {
     private readonly planService: PlanService,
   ) {}
 
-  async create(createSubscriptionDto: CreateSubscriptionDto): Promise<Subscription> {
+  async create(
+    createSubscriptionDto: CreateSubscriptionDto,
+  ): Promise<Subscription> {
     const user = await this.userService.findOne(createSubscriptionDto.userId);
     if (!user) throw new NotFoundException('User not found');
 
@@ -26,10 +34,14 @@ export class SubscriptionService {
 
     let planPrice: PlanPrice | undefined;
     if (createSubscriptionDto.planPriceId) {
-      planPrice = await this.planService.findPriceById(createSubscriptionDto.planPriceId);
+      planPrice = await this.planService.findPriceById(
+        createSubscriptionDto.planPriceId,
+      );
       if (!planPrice) throw new NotFoundException('Plan price not found');
       if (planPrice.plan.id !== plan.id) {
-        throw new BadRequestException('Plan price does not belong to the selected plan');
+        throw new BadRequestException(
+          'Plan price does not belong to the selected plan',
+        );
       }
     }
 

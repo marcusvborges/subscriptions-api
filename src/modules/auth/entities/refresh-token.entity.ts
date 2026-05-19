@@ -1,18 +1,18 @@
-import { BaseEntity } from "src/modules/database/entities/base.entity";
-import { User } from "src/modules/user/entities/user.entity";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { BaseEntity } from '../../database/entities/base.entity';
+import { User } from '../../user/entities/user.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity('refresh_tokens')
 export class RefreshToken extends BaseEntity {
   @Column()
-  token: string;
+  token!: string;
 
   @Column()
-  expiresAt: Date;
+  expiresAt!: Date;
 
   @Column()
-  revoked: boolean;
+  revoked!: boolean;
 
-  @ManyToOne(() => User, (user) => user.refreshTokens, {onDelete: 'CASCADE'})
-  user: User;
+  @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: 'CASCADE' })
+  user!: User;
 }

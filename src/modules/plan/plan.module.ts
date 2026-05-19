@@ -8,10 +8,7 @@ import { PlanPrice } from './entities/plan-price.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Plan,
-      PlanPrice,
-    ]),
+    TypeOrmModule.forFeature([Plan, PlanPrice]),
     forwardRef(() => SubscriptionModule),
   ],
   controllers: [PlansController],

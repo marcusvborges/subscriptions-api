@@ -1,25 +1,28 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { BaseEntity } from 'src/modules/database/entities/base.entity';
+import { BaseEntity } from '../../database/entities/base.entity';
 import { Plan } from './plan.entity';
-
-export type BillingInterval = 'month' | 'year' | 'week' | 'day';
+import { BillingInterval } from '../enum/billingInterval.enum';
 
 @Entity('plan_prices')
 export class PlanPrice extends BaseEntity {
   @ManyToOne(() => Plan, (plan) => plan.prices, { onDelete: 'CASCADE' })
-  plan: Plan;
+  plan!: Plan;
 
-  @Column({ type: 'enum', enum: ['month','year','week','day'], default: 'month' })
-  interval: BillingInterval;
+  @Column({
+    type: 'enum',
+    enum: BillingInterval,
+    default: 'month',
+  })
+  interval!: BillingInterval;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  amount: number;
+  amount!: number;
 
   @Column({ default: 'BRL' })
-  currency: string;
+  currency!: string;
 
   @Column({ default: false })
-  trialAvailable: boolean;
+  trialAvailable!: boolean;
 
   @Column({ type: 'int', nullable: true })
   trialDays?: number;

@@ -1,19 +1,19 @@
-import { IsEmail, IsNotEmpty, IsString, IsUUID } from "class-validator";
-import { Role } from "../enum/role.enum";
+import { IsEmail, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { Role } from '../enum/role.enum';
 
 export class ResponseUserDto {
   @IsUUID()
   @IsNotEmpty()
-  id: string;
+  id!: string;
 
   @IsString()
   @IsNotEmpty()
-  fullName: string;
+  fullName!: string;
 
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @IsNotEmpty()
-  role: Role
+  role!: Role;
 }

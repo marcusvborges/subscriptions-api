@@ -1,4 +1,4 @@
-import { Role } from "src/modules/user/enum/role.enum";
+import { Role } from '../../user/enum/role.enum';
 
 export interface JwtPayload {
   sub: string;

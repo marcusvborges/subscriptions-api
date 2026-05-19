@@ -10,7 +10,7 @@ import { createKeyv } from '@keyv/redis';
     NestCacheModule.registerAsync({
       isGlobal: true,
       inject: [TypedConfigService],
-      useFactory: async (config: TypedConfigService) => ({
+      useFactory: (config: TypedConfigService) => ({
         store: createKeyv(config.get('REDIS_URL')),
         ttl: 60,
       }),

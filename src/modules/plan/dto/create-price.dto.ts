@@ -1,15 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDecimal, IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { BillingInterval } from '../enum/billingInterval.enum';
 
 export class CreatePriceDto {
-  @ApiProperty({ enum: ['month','year','week','day'] })
-  @IsEnum(['month','year','week','day'])
-  interval: 'month' | 'year' | 'week' | 'day';
+  @ApiProperty({ enum: BillingInterval })
+  @IsEnum(BillingInterval)
+  interval!: BillingInterval;
 
   @ApiProperty()
   @IsNumber()
   @Min(0)
-  amount: number;
+  amount!: number;
 
   @ApiProperty({ required: false })
   @IsOptional()
