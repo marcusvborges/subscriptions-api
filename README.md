@@ -1,48 +1,28 @@
 # Subscription Management API
 
-A secure and extensible backend API for managing users, plans, and subscriptions — built with NestJS, TypeScript, and PostgreSQL.
+![NestJS](https://img.shields.io/badge/nestjs-red)
+![TypeScript](https://img.shields.io/badge/typescript-blue)
+![PostgreSQL](https://img.shields.io/badge/postgresql-blue)
+![Docker](https://img.shields.io/badge/docker-blue)
 
----
-
-## Table of Contents
-
-- [Subscription Management API](#subscription-management-api)
-  - [Table of Contents](#table-of-contents)
-  - [About the Project](#about-the-project)
-  - [Features](#features)
-    - [Authentication \& Security](#authentication--security)
-    - [User Module](#user-module)
-    - [Plan Module](#plan-module)
-    - [Subscription Module](#subscription-module)
-    - [Additional Features](#additional-features)
-  - [Tech Stack](#tech-stack)
-  - [Architecture Overview](#architecture-overview)
-  - [Prerequisites](#prerequisites)
-  - [Quick start](#quick-start)
-  - [Environment Variables](#environment-variables)
-  - [Available Scripts](#available-scripts)
-  - [Folder Structure](#folder-structure)
-  - [Roadmap](#roadmap)
-    - [Completed](#completed)
-    - [Next Steps](#next-steps)
-  - [License](#license)
+A secure and extensible backend API for managing users, plans, and subscriptions.
 
 ---
 
 ## About the Project
 
-This project is a **Subscription Management API** designed as a generic backend foundation
-for systems that require user authentication, authorization and subscription-based access control.
+This project is a production-oriented **Subscription Management API** designed to explore scalable backend architecture patterns for SaaS applications.
 
-It focuses on modeling a flexible subscription domain while applying modern backend engineering practices such as:
+The system focuses on:
 
-- Modular architecture
-- Layered design (Controller → Service → Repository)
-- DTO validation
-- JWT authentication
-- Role-based Access Control (RBAC)
+- Authentication & authorization
+- Subscription lifecycle management
+- RBAC access control
+- Refresh token rotation
+- Modular domain organization
+- Extensibility for future multi-tenant evolution
 
-The project is intentionally generic and not tied to any specific business or billing provider, and is designed to be consumed by other services through a well-defined API.
+The project is intentionally generic and not tied to any billing provider, allowing it to be reused across different systems that require subscription-based access control.
 
 ---
 
@@ -60,25 +40,31 @@ The project is intentionally generic and not tied to any specific business or bi
 ### User Module
 - User CRUD operations with soft delete
 - Role management
+- Secure password handling
 - One-to-many relationship between users and subscriptions
 
 ### Plan Module
 - CRUD operations for subscription plans
-- Support for multiple pricing configurations
+- Multiple billing intervals support
 - Flexible attributes using JSON-based fields
-- DTO-based validation
+- DTO validation
+- Plan pricing abstraction
 
 ### Subscription Module
 - Subscription creation and cancellation
-- Prevention of duplicate active subscriptions per plan
-- Subscription lifecycle derived from temporal fields
+- Prevention of duplicate active subscriptions
+- Subscription lifecycle management
 - Historical data preservation
+- Temporal subscription validation
 
 ### Additional Features
-- Centralized exception handling
 - Global validation pipes
-- OpenAPI (Swagger) documentation for API exploration and integration
-- Consistent and maintainable project structure
+- Centralized configuration module
+- Structured seed system
+- OpenAPI (Swagger) documentation
+- Dockerized infrastructure
+- Type-safe environment validation
+- Database migrations
 
 ---
 
@@ -87,11 +73,12 @@ The project is intentionally generic and not tied to any specific business or bi
 |-----------|----------|
 | **NestJS (Node.js)** | Backend framework |
 | **TypeScript** | Type-safe development |
-| **PostgreSQL** | Database |
+| **PostgreSQL** | Relational database |
 | **TypeORM** | ORM & migrations |
 | **Passport + JWT** | Authentication |
-| **Jest** | Unit testing |
+| **Jest** | Testing |
 | **Docker** | Containerization |
+| **Swagger** | API documentation |
 
 ---
 
@@ -102,14 +89,14 @@ Layered architecture:
 Controller → Service → Repository → Database
 
 
-Each domain (Users, Plans, Subscriptions) has its own module with clean separation of concerns.
+Each domain is isolated in its own module following separation of concerns and modular design principles.
 
 ## Prerequisites
 
-- Node.js v20.19.2+
+- Node.js v20+
 - pnpm
-- PostgreSQL
-- Redis
+- Docker
+- Docker Compose
 
 ## Quick start
 
@@ -135,21 +122,27 @@ docker-compose up -d
 pnpm run migration:run
 ```
 
-5. **Start the development server**
+5. **Run database seeders**
+```bash
+pnpm run seed:all
+```
+
+6. **Start the development server**
 ```bash
 pnpm run start:dev
 ```
 
 ## Environment Variables
 
-Running `cp .env.example .env` will create a `.env` file in the project root:
+Running `cp .env.example .env` will generate a local .env file.
+
 ```env
 PORT=3000
 
 DB_HOST=localhost
 DB_PORT=5432
-DB_USER=postgres
-DB_PASS=postgres
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
 DB_NAME=subscription_db
 
 JWT_SECRET=your_jwt_secret
@@ -158,27 +151,47 @@ JWT_EXPIRATION=3600
 REDIS_URL=redis://localhost:6379
 ```
 
-Configure your environment variables as needed.
+## API Documentation
+
+Swagger UI is available at:
+
+http://localhost:3000/api/docs
+
+## Database Seeding
+The project includes structured database seeders for development and testing purpose.
+
+### Available Seeders
+- Plans
+- Plan Prices
+
+### Execute Seeders
+
+```bash
+pnpm run seed:all
+```
 
 ## Available Scripts
 
 ```bash
 
 # Development
-pnpm run start:dev	   # Run in watch mode
-pnpm run start:debug   # Run in debug mode
+pnpm run start:dev
+pnpm run start:debug
 
 # Production
-pnpm run build	       # Build project
-pnpm run start:prod    # Start production server
-
-# Database & Migrations
-pnpm run migration:generate  # Generates new migration
-pnpm run migration:run       # Executes pending migrations
-pnpm run migration:revert    # Revert last migration
+pnpm run build
+pnpm run start:prod
 
 # Tests
-pnpm run test   # Run tests
+pnpm run test
+
+# Database & Migrations
+pnpm run migration:generate
+pnpm run migration:run
+pnpm run migration:revert
+
+# Seeders
+pnpm run seed:all
 ```
 
 ## Folder Structure
@@ -198,24 +211,50 @@ src/
 └── main.ts
 ```
 
+## Future Architectural Goals
+- Event-driven architecture
+- Queue-based background processing
+- Redis-based async workflows
+- Multi-tenant subscription model
+- Organization & Membership architecture
+- Payment provider abstraction
+- Billing webhooks
+- Audit logging
+- Domain-driven design evolution
+- AI-assisted specification workflow (SDD)
+
 ## Roadmap
 
 ### Completed
 - Project setup
-- Database configuration
-- User, Plan, Subscription modules
+- Docker infrastructure
+- PostgreSQL integration
+- Redis integration
+- Typed configuration module
+- User module
+- Plan module
+- Subscription module
 - JWT authentication
-- RBAC
-- BaseEntity inheritance
-- Subscription business logic
+- Refresh token rotation
+- RBAC authorization
+- Structured seed system
+- Swagger documentation
+- TypeORM migrations
 
 
-### Next Steps
-- Cron jobs for automatic expiration
-- Webhook integration example (out of core scope)
-- Unit tests (basic)
-- Admin panel (Next.js)
+### In Progress
+- Unit tests
 - Full E2E tests
+- Queue integration
+- Cache abstraction improvements
+
+### Planned
+- Cron jobs for subscription expiration
+- Event-driven workflows
+- Multi-tenant architecture
+- Admin dashboard (Next.js)
+- Billing provider integration examples
+- Background job processing
 
 ## License
 
