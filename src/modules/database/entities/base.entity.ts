@@ -16,5 +16,5 @@ export class BaseEntity {
   updatedAt!: Date;
 
   @DeleteDateColumn({ type: 'timestamptz', nullable: true })
-  deletedAt!: Date;
+  deletedAt?: Date | null;
 }

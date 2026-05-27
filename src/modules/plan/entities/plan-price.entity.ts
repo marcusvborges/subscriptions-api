@@ -25,8 +25,8 @@ export class PlanPrice extends BaseEntity {
   trialAvailable!: boolean;
 
   @Column({ type: 'int', nullable: true })
-  trialDays?: number;
+  trialDays?: number | null;
 
   @Column('jsonb', { nullable: true })
-  metadata?: Record<string, any>;
+  metadata?: Record<string, any> | null;
 }
