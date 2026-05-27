@@ -79,6 +79,11 @@ export class PlanService {
     planId: string,
     createPriceDto: CreatePriceDto,
   ): Promise<PlanPrice> {
+    // Validate pricing: must be positive
+    if (createPriceDto.amount <= 0) {
+      throw new BadRequestException('Price amount must be greater than 0');
+    }
+
     const plan = await this.findOne(planId);
     const newPrice = this.planPriceRepository.create({
       ...createPriceDto,

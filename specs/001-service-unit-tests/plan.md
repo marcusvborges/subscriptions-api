@@ -28,7 +28,7 @@ Comprehensive unit test suite for PlanService and SubscriptionService validating
 
 **Constraints**: Tests must be fully isolated with mocked repositories; no database connections during test execution; support parallel test execution
 
-**Scale/Scope**: 2 services (PlanService, SubscriptionService), 4 entities (Plan, PlanPrice, Subscription, Customer), 14 functional requirements with 6 user story acceptance scenarios plus edge cases
+**Scale/Scope**: 2 services (PlanService, SubscriptionService), 4 entities (Plan, PlanPrice, Subscription, User), 14 functional requirements with 6 user story acceptance scenarios plus edge cases
 
 ## Constitution Check
 
@@ -51,57 +51,61 @@ Comprehensive unit test suite for PlanService and SubscriptionService validating
 ### Documentation (this feature)
 
 ```text
-specs/001-service-unit-tests/
-├── spec.md              # Feature specification
-├── plan.md              # This file (implementation planning)
-├── research.md          # Phase 0 output (dependencies and best practices)
-├── data-model.md        # Phase 1 output (test structure and mocking strategy)
-├── quickstart.md        # Phase 1 output (running tests locally)
-├── contracts/           # Phase 1 output (test file structure contracts)
-└── checklists/
-    └── requirements.md  # Quality checklist
+specs/[###-feature]/
+├── plan.md              # This file (/speckit-plan command output)
+├── research.md          # Phase 0 output (/speckit-plan command)
+├── data-model.md        # Phase 1 output (/speckit-plan command)
+├── quickstart.md        # Phase 1 output (/speckit-plan command)
+├── contracts/           # Phase 1 output (/speckit-plan command)
+└── tasks.md             # Phase 2 output (/speckit-tasks command - NOT created by /speckit-plan)
 ```
 
-### Source Code (repository structure)
+### Source Code (repository root)
+<!--
+  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
+  for this feature. Delete unused options and expand the chosen structure with
+  real paths (e.g., apps/admin, packages/something). The delivered plan must
+  not include Option labels.
+-->
 
 ```text
-src/modules/
-├── plan/
-│   ├── plan.service.ts          # Existing implementation
-│   ├── plan.service.spec.ts     # EXISTING - partial tests (to be completed)
-│   ├── entities/
-│   │   ├── plan.entity.ts
-│   │   └── plan-price.entity.ts
-│   └── dto/
-│       ├── create-plan.dto.ts
-│       ├── update-plan.dto.ts
-│       ├── create-price.dto.ts
-│       └── update-price.dto.ts
-│
-├── subscription/
-│   ├── subscription.service.ts      # Existing implementation
-│   ├── subscription.service.spec.ts # EXISTING - partial tests (to be completed)
-│   ├── entities/
-│   │   └── subscription.entity.ts
-│   └── dto/
-│       ├── create-subscription.dto.ts
-│       └── update-subscription.dto.ts
-│
-└── user/
-    ├── user.service.ts
-    └── user.entity.ts
+# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
+src/
+├── models/
+├── services/
+├── cli/
+└── lib/
 
-jest.config.js              # Jest configuration (preset: ts-jest)
-tsconfig.json              # TypeScript config
-package.json               # Test scripts: test, test:watch, test:cov
+tests/
+├── contract/
+├── integration/
+└── unit/
+
+# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
+backend/
+├── src/
+│   ├── models/
+│   ├── services/
+│   └── api/
+└── tests/
+
+frontend/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   └── services/
+└── tests/
+
+# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
+api/
+└── [same as backend above]
+
+ios/ or android/
+└── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**Structure Decision**: 
-- Extend existing `.spec.ts` test files located in same module directories as services
-- Use NestJS testing patterns with @nestjs/testing Test module builder
-- Leverage existing jest.config.js (ts-jest preset configured)
-- Repository mocking via TypeORM mock utilities or jest.mock()
-- Test organization: arrange-act-assert pattern with describe/it blocks by business rule
+**Structure Decision**: [Document the selected structure and reference the real
+directories captured above]
 
 ## Complexity Tracking
 

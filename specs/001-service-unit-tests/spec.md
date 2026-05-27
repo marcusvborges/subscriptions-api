@@ -30,9 +30,9 @@ Test engineers need to verify that PlanService correctly creates plans with vali
 
 Test engineers verify that billing intervals are correctly validated (monthly, annual, etc.) and that plan updates maintain data consistency while allowing necessary modifications.
 
-**Why this priority**: Billing interval directly affects customer billing schedules and financial reconciliation. Plan updates must be safe and traceable for operational reliability.
+**Why this priority**: Billing interval directly affects user billing schedules and financial reconciliation. Plan updates must be safe and traceable for operational reliability.
 
-**Independent Test**: Test billing interval validation and plan updates independently. Ensures customers are billed on correct schedules and plan modifications don't corrupt existing subscriptions.
+**Independent Test**: Test billing interval validation and plan updates independently. Ensures users are billed on correct schedules and plan modifications don't corrupt existing subscriptions.
 
 **Acceptance Scenarios**:
 
@@ -47,7 +47,7 @@ Test engineers verify that billing intervals are correctly validated (monthly, a
 
 Test engineers confirm that plan soft deletes preserve historical data for audit trails and reporting while preventing use of deleted plans for new subscriptions.
 
-**Why this priority**: Soft deletes are critical for compliance, audit trails, and financial reconciliation. Hard deletes would corrupt historical records needed for customer disputes and regulatory requirements.
+**Why this priority**: Soft deletes are critical for compliance, audit trails, and financial reconciliation. Hard deletes would corrupt historical records needed for user disputes and regulatory requirements.
 
 **Independent Test**: Verify soft delete functionality independently. Ensures plans remain recoverable and historical subscriptions remain auditable.
 
@@ -61,18 +61,18 @@ Test engineers confirm that plan soft deletes preserve historical data for audit
 
 ### User Story 4 - Validate Subscription Creation and Duplicate Prevention (Priority: P1)
 
-Test engineers verify that subscriptions are created correctly with proper customer and plan linkage, and that duplicate active subscriptions are prevented to avoid overbilling and customer confusion.
+Test engineers verify that subscriptions are created correctly with proper user and plan linkage, and that duplicate active subscriptions are prevented to avoid overbilling and user confusion.
 
-**Why this priority**: Duplicate subscriptions directly cause revenue leakage and customer support issues. Subscription creation accuracy is foundational for all billing operations.
+**Why this priority**: Duplicate subscriptions directly cause revenue leakage and user support issues. Subscription creation accuracy is foundational for all billing operations.
 
 **Independent Test**: Test subscription creation and duplicate prevention independently. Delivers reliable subscription data that downstream payment processing depends on.
 
 **Acceptance Scenarios**:
 
-1. **Given** a customer and active plan, **When** createSubscription() is called with valid data, **Then** subscription is created with unique ID and correct linkages
-2. **Given** a customer with existing active subscription to same plan, **When** createSubscription() is called again, **Then** operation fails with duplicate prevention error
-3. **Given** a customer with cancelled subscription to a plan, **When** createSubscription() is called for same plan, **Then** new subscription is allowed
-4. **Given** a subscription creation request with invalid customer or plan ID, **When** createSubscription() is called, **Then** operation fails with validation error
+1. **Given** a user and active plan, **When** createSubscription() is called with valid data, **Then** subscription is created with unique ID and correct linkages
+2. **Given** a user with existing active subscription to same plan, **When** createSubscription() is called again, **Then** operation fails with duplicate prevention error
+3. **Given** a user with cancelled subscription to a plan, **When** createSubscription() is called for same plan, **Then** new subscription is allowed
+4. **Given** a subscription creation request with invalid user or plan ID, **When** createSubscription() is called, **Then** operation fails with validation error
 
 ---
 
@@ -80,7 +80,7 @@ Test engineers verify that subscriptions are created correctly with proper custo
 
 Test engineers confirm that subscriptions can be properly cancelled and that expiration dates are correctly calculated and validated to ensure accurate subscription lifecycle tracking.
 
-**Why this priority**: Cancellation and expiration directly affect revenue recognition and customer service. Essential for customer retention and churn analysis.
+**Why this priority**: Cancellation and expiration directly affect revenue recognition and user service. Essential for user retention and churn analysis.
 
 **Independent Test**: Test cancellation logic and expiration date validation independently. Ensures accurate subscription status tracking.
 
@@ -96,9 +96,9 @@ Test engineers confirm that subscriptions can be properly cancelled and that exp
 
 ### User Story 6 - Validate Historical Subscription Records (Priority: P2)
 
-Test engineers verify that all historical subscription records are preserved during cancellations and updates to enable accurate customer billing history and dispute resolution.
+Test engineers verify that all historical subscription records are preserved during cancellations and updates to enable accurate user billing history and dispute resolution.
 
-**Why this priority**: Historical records are critical for customer support, financial audits, and dispute resolution. Data loss here causes customer service failures and compliance violations.
+**Why this priority**: Historical records are critical for user support, financial audits, and dispute resolution. Data loss here causes user service failures and compliance violations.
 
 **Independent Test**: Verify historical record preservation through subscription lifecycle changes. Enables comprehensive billing history queries.
 
@@ -115,8 +115,8 @@ Test engineers verify that all historical subscription records are preserved dur
 - What happens when creating a subscription for a soft-deleted plan?
 - How does the system handle subscriptions with retroactive start dates?
 - What occurs when a plan is updated while active subscriptions are being billed?
-- How are concurrent subscription creation attempts for the same customer handled?
-- What is the behavior when retrieving subscriptions for a non-existent customer?
+- How are concurrent subscription creation attempts for the same user handled?
+- What is the behavior when retrieving subscriptions for a non-existent user?
 
 ## Requirements *(mandatory)*
 
@@ -128,9 +128,9 @@ Test engineers verify that all historical subscription records are preserved dur
 - **FR-004**: PlanService MUST support updating plan metadata (name, description) without affecting existing subscriptions
 - **FR-005**: PlanService MUST implement soft delete that marks plans as deleted without removing database records
 - **FR-006**: PlanService MUST exclude soft-deleted plans from active plan queries
-- **FR-007**: SubscriptionService MUST successfully create subscriptions with valid customer ID and plan ID references
-- **FR-008**: SubscriptionService MUST prevent creation of duplicate active subscriptions for same customer-plan combination
-- **FR-009**: SubscriptionService MUST allow new subscriptions only if no active subscription exists for that customer-plan pair
+- **FR-007**: SubscriptionService MUST successfully create subscriptions with valid user ID and plan ID references
+- **FR-008**: SubscriptionService MUST prevent creation of duplicate active subscriptions for same user-plan combination
+- **FR-009**: SubscriptionService MUST allow new subscriptions only if no active subscription exists for that user-plan pair
 - **FR-010**: SubscriptionService MUST support cancellation of active subscriptions with status change and timestamp recording
 - **FR-011**: SubscriptionService MUST calculate subscription expiration dates correctly based on start date and billing interval
 - **FR-012**: SubscriptionService MUST validate expiration dates are after subscription start dates
@@ -141,8 +141,8 @@ Test engineers verify that all historical subscription records are preserved dur
 
 - **Plan**: Represents a subscription plan with name, description, pricing, and billing interval. Has multiple price tiers and can be soft-deleted.
 - **PlanPrice**: Represents individual pricing tiers within a plan, storing billing interval and amount for each tier.
-- **Subscription**: Represents a customer's subscription to a plan, tracking status (active, cancelled, expired), dates, and historical records.
-- **Customer**: Referenced entity representing the account holder; relationship ensures subscriptions are tied to valid customers.
+- **Subscription**: Represents a user's subscription to a plan, tracking status (active, cancelled, expired), dates, and historical records.
+- **User**: Referenced entity representing the account holder; relationship ensures subscriptions are tied to valid users.
 
 ## Success Criteria *(mandatory)*
 
@@ -162,6 +162,6 @@ Test engineers verify that all historical subscription records are preserved dur
 - Billing intervals are constrained to predefined enum values (monthly, annual, etc.)
 - Soft delete implementation uses a `deletedAt` timestamp field for logical deletion
 - Subscription status is managed via enum with values: active, cancelled, expired
-- Customer entities already exist in the system and can be referenced by ID
+- User entities already exist in the system and can be referenced by ID
 - No external dependencies (payment processors, email services) are involved in these specific business rules
 - Tests will be added to existing `.spec.ts` files or new test files in the same module directories
