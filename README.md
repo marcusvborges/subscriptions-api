@@ -1,11 +1,13 @@
 # Subscription Management API
 
-![NestJS](https://img.shields.io/badge/nestjs-red)
+![Node](https://img.shields.io/badge/node-20-green)
+![NestJS](https://img.shields.io/badge/nestjs-backend-red)
 ![TypeScript](https://img.shields.io/badge/typescript-blue)
-![PostgreSQL](https://img.shields.io/badge/postgresql-blue)
+![PostgreSQL](https://img.shields.io/badge/postgresql-db-blue)
 ![Docker](https://img.shields.io/badge/docker-blue)
+![License](https://img.shields.io/github/license/marcusvborges/subscriptions-api)
 
-A secure and extensible backend API for managing users, plans, and subscriptions.
+A modular and production-oriented backend API for managing users, plans, and subscriptions.
 
 ---
 
@@ -84,12 +86,27 @@ The project is intentionally generic and not tied to any billing provider, allow
 
 ## Architecture Overview
 
-Layered architecture:
+The project follows a modular layered architecture inspired by clean architecture principles.
 
+```text
 Controller → Service → Repository → Database
+```
 
+The application is organized using a modular domain-oriented structure.
 
-Each domain is isolated in its own module following separation of concerns and modular design principles.
+```
+src/modules
+├── auth/            # Authentication & authorization
+├── user/            # User management
+├── plan/            # Subscription plans & pricing
+├── subscription/    # Subscription lifecycle
+├── cache/           # Redis caching abstraction
+├── database/        # Database configuration & migrations
+├── config/          # Environment & app configuration
+└── hash/            # Password hashing abstraction
+```
+
+Each module encapsulates its own controllers, services, DTOs, entities, and business rules, helping maintain separation of concerns, scalability, and maintainability.
 
 ## Prerequisites
 
@@ -132,6 +149,8 @@ pnpm run seed:all
 pnpm run start:dev
 ```
 
+---
+
 ## Environment Variables
 
 Running `cp .env.example .env` will generate a local .env file.
@@ -151,11 +170,15 @@ JWT_EXPIRATION=3600
 REDIS_URL=redis://localhost:6379
 ```
 
+---
+
 ## API Documentation
 
 Swagger UI is available at:
 
 http://localhost:3000/api/docs
+
+---
 
 ## Database Seeding
 The project includes structured database seeders for development and testing purpose.
@@ -169,6 +192,8 @@ The project includes structured database seeders for development and testing pur
 ```bash
 pnpm run seed:all
 ```
+
+---
 
 ## Available Scripts
 
@@ -194,11 +219,49 @@ pnpm run migration:revert
 pnpm run seed:all
 ```
 
+---
+
+## Testing
+
+The project includes unit tests for core business services using:
+
+- Jest
+- NestJS Testing Module
+- Mocked TypeORM repositories
+
+### Run Tests
+
+```bash
+pnpm run test
+```
+
+### Run Test Coverage
+
+```bash
+pnpm run test:cov
+```
+
+### Current Coverage Focus
+
+- PlanService
+- SubscriptionService
+- Business rule validation
+- Subscription lifecycle scenarios
+- Edge cases and failure handling
+
+The testing strategy avoids direct database access during unit tests to ensure fast and deterministic execution.
+
+---
+
 ## Folder Structure
 
 ```
 src/
 ├── common/
+│   ├── decorators/
+│   ├── guards/
+│   ├── interceptors/
+│   └── utils/
 ├── modules/
 │   ├── auth/
 │   ├── cache/
@@ -211,6 +274,8 @@ src/
 └── main.ts
 ```
 
+---
+
 ## Future Architectural Goals
 - Event-driven architecture
 - Queue-based background processing
@@ -221,7 +286,8 @@ src/
 - Billing webhooks
 - Audit logging
 - Domain-driven design evolution
-- AI-assisted specification workflow (SDD)
+
+---
 
 ## Roadmap
 
@@ -240,10 +306,11 @@ src/
 - Structured seed system
 - Swagger documentation
 - TypeORM migrations
+- Unit tests for core business services
 
 
 ### In Progress
-- Unit tests
+- Expanded test coverage
 - Full E2E tests
 - Queue integration
 - Cache abstraction improvements
@@ -255,6 +322,8 @@ src/
 - Admin dashboard (Next.js)
 - Billing provider integration examples
 - Background job processing
+
+---
 
 ## License
 
